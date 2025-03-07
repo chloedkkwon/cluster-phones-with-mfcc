@@ -1,5 +1,7 @@
 # Written by Chloe D. Kwon (dk837@cornell.edu)
 # March 4, 2025
+# Input: wav files
+# Output: mfcc vectors saved in .npy files
 # How to run: python get_mfcc.py ../_data/wav ../_data
 
 import os
