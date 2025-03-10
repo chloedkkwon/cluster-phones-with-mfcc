@@ -2,12 +2,12 @@
 # Written by Chloe D. Kwon (dk837@cornell.edu)
 # March 7, 2025
 # How to run: python cluster_phone.py ../_data/wav ../_data
-# MFCC in each audio file -> segment these feature vectors corresponding to each phoneme
+# MFCC in each audio file -> segment these feature vectors corresponding to each phone
 
 # Input: dictionary pickle file containing each phone label as a key and values as a list with each mfcc feature array
 # e.g., ph_data['phone_A'] = [array 1 (shape=(2, 13)), array2 (shape=(5, 13)), ...]
-# Output: Dendrogram from hierarchical clustering and A scatter plot from KMeans clustering
-# Prints evaluation results
+# Output: Dendrogram from hierarchical clustering and a scatter plot from KMeans clustering using t-SNE
+# Prints evaluation results (cross-validation)
 
 import pickle
 import sys
