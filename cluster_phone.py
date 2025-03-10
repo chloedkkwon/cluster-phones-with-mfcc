@@ -1,13 +1,15 @@
 
-# Written by Chloe D. Kwon (dk837@cornell.edu)
-# March 7, 2025
-# How to run: python cluster_phone.py ../_data/wav ../_data
-# MFCC in each audio file -> segment these feature vectors corresponding to each phone
+'''
+Written by Chloe D. Kwon (dk837@cornell.edu/chloe.dkkwon@gmail.com)
+March 7, 2025
+How to run: python cluster_phone.py ../_data/wav ../_data
+Objective: MFCC in each audio file are segmented into corresponding phones
 
-# Input: dictionary pickle file containing each phone label as a key and values as a list with each mfcc feature array
-# e.g., ph_data['phone_A'] = [array 1 (shape=(2, 13)), array2 (shape=(5, 13)), ...]
-# Output: Dendrogram from hierarchical clustering and a scatter plot from KMeans clustering using t-SNE
-# Prints evaluation results (cross-validation)
+Input: dictionary (pickle file) containing each phone label as a key and values as a list with each mfcc array
+   e.g., ph_data['phone_A'] = [array 1 (shape=(2, 13)), array2 (shape=(5, 13)), ...]
+Output: Dendrogram from hierarchical clustering and a scatter plot from KMeans clustering using t-SNE
+   Prints evaluation results (cross-validation with 3 folds; adjust with `n_splits`)
+'''
 
 import pickle
 import sys
@@ -36,7 +38,7 @@ with open(data_dir, 'rb') as hdl:
     ph_data = pickle.load(hdl)
 
 ''' Pad each token to get a fixed length '''
-# Find max len
+# Find max len of the arrays for padding
 max_frames = max(instance.shape[0] for instances in ph_data.values() for instance in instances)
 
 # Pad all tokens to the max length
@@ -52,11 +54,11 @@ for phoneme, instances in ph_data.items():
         token_features.append(padded_instance.flatten())
         token_labels.append(phoneme)
 
-token_features = np.array(token_features)  # Convert to numpy array
+token_features = np.array(token_features) 
 
+# Get the number of unique phone labels
 keys = list(ph_data.keys())
 n_ph = len(set(keys))
-# n_ph = len(set([k.split('_')[0] for k in keys])) # get unique N of labels (remove suffixes like _name)
 
 
 ''' Encode labels into index numbers '''
@@ -91,14 +93,14 @@ tsne_features = tsne.fit_transform(token_features)
 kmeans = KMeans(n_clusters=n_ph, random_state=1)
 cluster_labels = kmeans.fit_predict(token_features)
 
-# Create mapping of cluster → most common phoneme
+# Create mapping of cluster -> most common phone
 cluster_to_phoneme = {}
 for cluster in np.unique(cluster_labels):
-    phoneme_indices = true_label_numbers[cluster_labels == cluster]  # Get phoneme labels in this cluster
+    phoneme_indices = true_label_numbers[cluster_labels == cluster]  # Get phone labels in this cluster
     most_common_phoneme = label_encoder.inverse_transform([Counter(phoneme_indices).most_common(1)[0][0]])[0]
-    cluster_to_phoneme[cluster] = most_common_phoneme  # Store most common phoneme per cluster
+    cluster_to_phoneme[cluster] = most_common_phoneme  # Store most common phone per cluster
 
-# Plot
+# Plot cluster results
 plt.figure(figsize=(10, 7))
 scatter = plt.scatter(tsne_features[:, 0], tsne_features[:, 1], c=cluster_labels, cmap='tab20', alpha=0.7)
 plt.colorbar(scatter, label="Cluster Label")
